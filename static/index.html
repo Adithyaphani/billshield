@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BillShield — Is this medical bill legal?</title>
+<meta name="description" content="Check a medical bill against the federal No Surprises Act. Cited reasoning, the amount in question, and a dispute letter you can send.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%2316212b'/><text x='50' y='72' font-size='62' font-family='Georgia,serif' fill='%23edf0f2' text-anchor='middle'>B</text></svg>">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap masthead-in">
+    <a class="logo" href="/">
+      <strong>BillShield</strong>
+      <span>No Surprises Act</span>
+    </a>
+    <nav>
+      <a href="#check">Check a bill</a>
+      <a href="#index">Rule index</a>
+      <a href="/docs">API</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-in">
+    <div>
+      <h1>Some of this bill isn't yours to pay.</h1>
+      <p class="lede">
+        Federal law has banned many surprise medical bills since 2022.
+        Hardly anyone knows, so the bills get paid anyway. Answer a few
+        questions about yours and find out where it stands — with the
+        statute that says so.
+      </p>
+      <div class="hero-actions">
+        <a class="act" href="#check">Check a bill</a>
+        <a class="act plain" href="#cases">Open a sample case</a>
+      </div>
+    </div>
+
+    <figure class="specimen" aria-label="Example hospital statement with an unlawful charge marked">
+      <div class="sp-head">STATEMENT OF ACCOUNT &nbsp;·&nbsp; 14 AUG 2026</div>
+      <div class="sp-who">Mercy General Hospital</div>
+      <div class="sp-line"><span>Facility fee</span><span>1,840.00</span></div>
+      <div class="sp-line"><span>Surgeon, in network</span><span>300.00</span></div>
+      <div class="sp-line flagged"><span>Anesthesia, out of network</span><span>2,150.00</span></div>
+      <div class="sp-line"><span>Recovery room</span><span>410.00</span></div>
+      <div class="sp-total"><span>Balance due</span><span>4,700.00</span></div>
+      <figcaption class="stamp">Not owed</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="how">
+  <div class="wrap how-in">
+    <div class="how-step">
+      <span class="n">STEP 1</span>
+      <b>Answer what you know</b>
+      <p>A few questions, one screen at a time. Skip an amount if you don't
+         have it — only the facts that change the answer are required.</p>
+    </div>
+    <div class="how-step">
+      <span class="n">STEP 2</span>
+      <b>Read the determination</b>
+      <p>You get a verdict, the rules behind it with their citations, and the
+         amount you are being asked for above what you lawfully owe.</p>
+    </div>
+    <div class="how-step">
+      <span class="n">STEP 3</span>
+      <b>Send the letter</b>
+      <p>Add your name and the provider's, download the PDF, and post it to
+         the billing department. Keep a copy.</p>
+    </div>
+  </div>
+</section>
+
+<main>
+
+<section class="section" id="cases">
+  <div class="wrap">
+    <h2>Start from a case that looks like yours</h2>
+    <p class="intro">Each one fills the form with a complete set of facts, so
+       you can see how the answer is reached before entering your own.</p>
+    <div class="files" id="case-files"></div>
+  </div>
+</section>
+
+<section class="section" id="check">
+  <div class="wrap">
+    <h2>Check your bill</h2>
+    <p class="intro">Nothing is saved. The same answers always produce the
+       same result, because the assessment runs against a fixed set of rules
+       rather than a guess.</p>
+
+    <form id="form" class="doc">
+      <div class="doc-head">
+        <b>Bill assessment</b>
+        <span>FEDERAL NO SURPRISES ACT</span>
+      </div>
+
+      <div class="progress" id="progress">
+        <span class="count" id="step-count">Step 1</span>
+        <div class="pips" id="pips"></div>
+      </div>
+
+      <fieldset class="part">
+        <legend>Part 1 — Coverage</legend>
+        <div class="choices">
+          <label><input type="radio" name="coverage" value="insured" checked>
+            <span>I have health insurance</span></label>
+          <label><input type="radio" name="coverage" value="uninsured_self_pay">
+            <span>I'm uninsured or paying cash</span></label>
+        </div>
+      </fieldset>
+
+      <div id="insured-path">
+        <fieldset class="part">
+          <legend>Part 2 — Type of care</legend>
+          <div class="choices">
+            <label><input type="radio" name="care_type" value="emergency" checked>
+              <span>Emergency room visit</span></label>
+            <label><input type="radio" name="care_type" value="post_stabilization">
+              <span>Care after I was stabilised</span></label>
+            <label><input type="radio" name="care_type" value="scheduled">
+              <span>Scheduled or planned care</span></label>
+            <label><input type="radio" name="care_type" value="air_ambulance">
+              <span>Air ambulance</span></label>
+            <label><input type="radio" name="care_type" value="ground_ambulance">
+              <span>Ground ambulance</span></label>
+          </div>
+        </fieldset>
+
+        <div id="scheduled-parts" class="hidden">
+          <fieldset class="part">
+            <legend>Part 3 — Place of service</legend>
+            <label class="entry"><span>Where were you treated?</span>
+              <select name="facility_type" id="facility_type"></select></label>
+          </fieldset>
+
+          <fieldset class="part">
+            <legend>Part 4 — Network status</legend>
+            <div class="pair">
+              <div>
+                <span class="q">Was the facility in your network?</span>
+                <div class="choices" role="radiogroup">
+                  <label><input type="radio" name="facility_in_network" value="true"><span>Yes</span></label>
+                  <label><input type="radio" name="facility_in_network" value="false"><span>No</span></label>
+                  <label><input type="radio" name="facility_in_network" value=""><span>Not sure</span></label>
+                </div>
+              </div>
+              <div>
+                <span class="q">Was the provider in your network?</span>
+                <div class="choices" role="radiogroup">
+                  <label><input type="radio" name="provider_in_network" value="true"><span>Yes</span></label>
+                  <label><input type="radio" name="provider_in_network" value="false"><span>No</span></label>
+                  <label><input type="radio" name="provider_in_network" value=""><span>Not sure</span></label>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="part">
+            <legend>Part 5 — Treating specialty</legend>
+            <label class="entry"><span>Who sent this bill?</span>
+              <select name="specialty" id="specialty"></select></label>
+            <p class="aside" id="specialty-aside"></p>
+          </fieldset>
+        </div>
+
+        <fieldset class="part hidden" id="consent-part">
+          <legend>Part 6 — Waiver</legend>
+          <label class="tick">
+            <input type="checkbox" name="signed_consent" id="signed_consent">
+            <span>I signed a form agreeing to out-of-network charges</span>
+          </label>
+          <div id="consent-detail" class="nested hidden">
+            <label class="entry">
+              <span>How many hours before the service did you get that form?</span>
+              <input type="number" name="consent_hours_before" min="0" step="0.5"
+                     placeholder="e.g. 2">
+            </label>
+            <label class="tick">
+              <input type="checkbox" name="same_day_scheduled">
+              <span>The appointment was booked the same day</span>
+            </label>
+            <p class="aside">Timing decides whether the form counts: 72 hours
+               normally, 3 hours if you booked same-day.</p>
+          </div>
+        </fieldset>
+
+        <fieldset class="part">
+          <legend>Part 7 — Amounts <span class="optional">(optional)</span></legend>
+          <div class="pair">
+            <label class="entry"><span>Amount billed to you</span>
+              <input type="number" name="billed_amount" min="0" step="0.01" placeholder="0.00"></label>
+            <label class="entry"><span>Your in-network cost share</span>
+              <input type="number" name="in_network_cost_share" min="0" step="0.01" placeholder="0.00"></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="part hidden" id="state-part">
+          <legend>Part 8 — State</legend>
+          <label class="entry"><span>Two-letter state code</span>
+            <input type="text" name="state" maxlength="2" placeholder="TX" class="short"></label>
+          <p class="aside">Ground ambulance is a gap in the federal law. Some
+             states fill it, so the state matters here.</p>
+        </fieldset>
+      </div>
+
+      <div id="selfpay-path" class="hidden">
+        <fieldset class="part">
+          <legend>Part 2 — Good Faith Estimate</legend>
+          <div class="choices">
+            <label><input type="radio" name="gfe_provided" value="true" checked>
+              <span>I was given a written estimate</span></label>
+            <label><input type="radio" name="gfe_provided" value="false">
+              <span>I never got one</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="part" id="gfe-amounts">
+          <legend>Part 3 — Estimate against the bill</legend>
+          <div class="pair">
+            <label class="entry"><span>Estimate you were given</span>
+              <input type="number" name="gfe_amount" min="0" step="0.01" placeholder="0.00"></label>
+            <label class="entry"><span>Amount actually billed</span>
+              <input type="number" name="billed_amount" min="0" step="0.01" placeholder="0.00"></label>
+          </div>
+          <p class="aside">A gap of $400 or more opens the federal dispute process.</p>
+        </fieldset>
+      </div>
+
+      <div class="step-nav">
+        <div class="side">
+          <button type="button" class="act plain hidden" id="back">Back</button>
+          <button type="button" class="restart hidden" id="restart">Start over</button>
+        </div>
+        <div class="side">
+          <button type="button" class="act" id="next">Continue</button>
+          <button type="submit" class="act hidden" id="submit">Assess this bill</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="section hidden" id="result">
+  <div class="wrap" id="result-body"></div>
+</section>
+
+<section class="section" id="index">
+  <div class="wrap">
+    <h2>Every rule this uses</h2>
+    <p class="intro">There is no hidden model. These are the rules, with their
+       citations, and each assessment names which of them applied. If the
+       answer is wrong, you can point at where.</p>
+    <div class="index" id="rule-index"></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="colophon">
+  <div class="wrap">
+    <p>BillShield gives general information about federal law. It is not legal
+       advice, it cannot see your paperwork, and it does not know your state's
+       statutes. Check the citations and talk to someone qualified before
+       acting on a large bill.</p>
+    <p class="help">Free federal help — No Surprises Help Desk · 1-800-985-3059 · cms.gov/nosurprises</p>
+  </div>
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>
